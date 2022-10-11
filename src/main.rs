@@ -4,19 +4,24 @@ use std::process::Command;
 fn main() {
     // It is needed to indicate the variable type when it is a collection
     let args: Vec<String> = env::args().collect();
-    dbg!(&args);
+    //dbg!(&args);
 
     let video = Video::new(&args);
-    let outuput = format!("{}(2).mp4", video.file_name);
+    let outuput = format!("{}(2).mp4", video.name);
 
     let mut compress = Command::new("ffmpeg");
-    compress.arg("-i").arg(video.file_path).arg(outuput);
-    compress.status().expect("Unable to compress the video");
+    println!("Compressing...");
+    compress
+        .arg("-i")
+        .arg(video.path)
+        .arg(outuput)
+        .output()
+        .expect("msg");
 }
 
 struct Video {
-    file_path: String,
-    file_name: String,
+    path: String,
+    name: String,
 }
 
 impl Video {
@@ -28,8 +33,8 @@ impl Video {
         }
 
         Video {
-            file_path: args[1].clone(),
-            file_name: name(args),
+            path: args[1].clone(),
+            name: name(args),
         }
     }
 }
